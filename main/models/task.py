@@ -15,7 +15,7 @@ class Task(models.Model):
         READY_FOR_RELEASE = "ready_for_release"
         REALESED = "released"
         ARCHIVED = "archived"
-        
+
     title = models.CharField(max_length=50)
     description = models.TextField(default="", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -23,15 +23,15 @@ class Task(models.Model):
     deadline = models.DateTimeField(null=True)
     status = models.DateField(default=Statuses.NEW_TASK, choices=Statuses.choices)
     priority = models.PositiveIntegerField(
-        default=1,
-        validators=[
-            MaxValueValidator(10),
-            MinValueValidator(1)
-        ]
+        default=1, validators=[MaxValueValidator(10), MinValueValidator(1)]
     )
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
-    executor = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name="executor")
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="author"
+    )
+    executor = models.ForeignKey(
+        User, null=True, on_delete=models.SET_NULL, related_name="executor"
+    )
     tags = models.ManyToManyField(Tag)
-    
+
     class Meta:
         ordering = ["-priority"]
