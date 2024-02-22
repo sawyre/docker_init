@@ -28,10 +28,25 @@ class Task(models.Model):
     created_by = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="author"
     )
-    executor = models.ForeignKey(
-        User, null=True, on_delete=models.SET_NULL, related_name="executor"
+    assignee = models.ForeignKey(
+        User, null=True, on_delete=models.SET_NULL, related_name="assignee"
     )
     tags = models.ManyToManyField(Tag)
 
     class Meta:
         ordering = ["-priority"]
+    
+    def change_status(self, new_status: Statuses) -> None:
+        available_status_changes = {
+            self.Statuses.NEW_TASK: [self.Statuses.IN_DEVELOPMENT, self.Statuses.ARCHIVED],
+            self.Statuses.IN_DEVELOPMENT: [self.Statuses.IN_QA],
+            self.Statuses.IN_QA: [self.Statuses.IN_DEVELOPMENT, self.Statuses.IN_CODE_REVIEW],
+            self.Statuses.IN_CODE_REVIEW: [self.Statuses.READY_FOR_RELEASE, self.Statuses.IN_DEVELOPMENT],
+            self.Statuses.READY_FOR_RELEASE: [self.Statuses.REALESED],
+            self.Statuses.REALESED: [self.Statuses.ARCHIVED]
+        }
+        
+        if self.status in available_status_changes and \
+           new_status in available_status_changes[self.status]:
+            self.status = new_status
+            self.save()
