@@ -9,6 +9,7 @@ class TaskManagerAdminSite(admin.AdminSite):
 
 task_manager_admin_site = TaskManagerAdminSite(name="Task manager admin")
 
+
 # Registering models in admin panel
 @admin.register(Tag, site=task_manager_admin_site)
 class TagAdmin(admin.ModelAdmin):
@@ -19,9 +20,11 @@ class TagAdmin(admin.ModelAdmin):
 class TaskAdmin(admin.ModelAdmin):
     pass
 
+
 class CustomUserAdmin(UserAdmin):
-    UserAdmin.list_display += ('role',)
-    UserAdmin.list_filter += ('role',)
-    UserAdmin.fieldsets[2][1]["fields"] = UserAdmin.fieldsets[2][1]["fields"] + ("role",)
+    list_display = UserAdmin.list_display + ("role",)
+    list_filter = UserAdmin.list_filter + ("role",)
+    fieldsets = UserAdmin.fieldsets + (("Custom User Fields", {"fields": ["role"]}),)
+
 
 task_manager_admin_site.register(User, CustomUserAdmin)
