@@ -1,9 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from datetime import datetime
+
 from .user import User
 from .tag import Tag
+from main.exceptions import UnavailableStatusChange
+
+from datetime import datetime
 
 
 class Task(models.Model):
@@ -13,7 +16,7 @@ class Task(models.Model):
         IN_QA = "in_qa"
         IN_CODE_REVIEW = "in_code_review"
         READY_FOR_RELEASE = "ready_for_release"
-        REALESED = "released"
+        RELEASED = "released"
         ARCHIVED = "archived"
 
     title = models.CharField(max_length=50)
@@ -41,21 +44,21 @@ class Task(models.Model):
 
     def change_status(self, new_status: Statuses) -> None:
         available_status_changes = {
-            self.Statuses.NEW_TASK: [
+            self.Statuses.NEW_TASK: {
                 self.Statuses.IN_DEVELOPMENT,
                 self.Statuses.ARCHIVED,
-            ],
+            },
             self.Statuses.IN_DEVELOPMENT: [self.Statuses.IN_QA],
-            self.Statuses.IN_QA: [
+            self.Statuses.IN_QA: {
                 self.Statuses.IN_DEVELOPMENT,
                 self.Statuses.IN_CODE_REVIEW,
-            ],
-            self.Statuses.IN_CODE_REVIEW: [
+            },
+            self.Statuses.IN_CODE_REVIEW: {
                 self.Statuses.READY_FOR_RELEASE,
                 self.Statuses.IN_DEVELOPMENT,
-            ],
-            self.Statuses.READY_FOR_RELEASE: [self.Statuses.REALESED],
-            self.Statuses.REALESED: [self.Statuses.ARCHIVED],
+            },
+            self.Statuses.READY_FOR_RELEASE: {self.Statuses.REALESED},
+            self.Statuses.REALESED: {self.Statuses.ARCHIVED},
         }
 
         if (
@@ -64,3 +67,5 @@ class Task(models.Model):
         ):
             self.status = new_status
             self.save()
+        else:
+            raise UnavailableStatusChange()
