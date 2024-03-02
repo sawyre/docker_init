@@ -12,13 +12,21 @@ class TestAdmin(APITestCase):
     client: APIClient
     admin: User
 
-    def setUp(self):
-        self.client = APIClient()
-        self.admin = User.objects.create_superuser("test", email=None, password="test")
-        self.client.login(username="test", password="test")
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.admin = User.objects.create_superuser("test@test.ru", email=None, password=None)
+        cls.client = APIClient()
+        cls.client.force_login(cls.admin)
+    
+    # def setUp(self):
+    #     self.client = APIClient()
+    #     self.admin = User.objects.create_superuser('test', email=None, password="test")
+    #     self.client.login(username='test',password="test")
 
+    @classmethod
     def assert_forms(
-        self, model: Type[models.Model], key: int, check_actions: Container = ()
+        cls, model: Type[models.Model], key: int, check_actions: Container = ()
     ) -> None:
         app_label = model._meta.app_label
         model_name = model._meta.model_name
@@ -29,7 +37,7 @@ class TestAdmin(APITestCase):
 
         for action, args in actions.items():
             url = reverse(f"admin:{app_label}_{model_name}_{action}", args=args)
-            response = self.client.get(url)
+            response = cls.client.get(url)
             assert response.status_code == HTTPStatus.OK, response.content
 
     def test_user(self) -> None:
@@ -42,3 +50,4 @@ class TestAdmin(APITestCase):
     def test_task(self) -> None:
         task = Task.objects.create(created_by=self.admin)
         self.assert_forms(Task, task.id)
+        
