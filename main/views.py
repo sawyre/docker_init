@@ -1,5 +1,6 @@
 from rest_framework import viewsets
-from serializers import UserSerializer, TaskSerializer, TagSerializer
+from .serializers import UserSerializer, TaskSerializer, TagSerializer
+from .models import User, Tag, Task
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -8,12 +9,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = TaskSerializer.objects.select_related(
+    queryset = Task.objects.select_related(
         "asignee", "created_by"
     ).prefetch_related("tags")
     serializer_class = TaskSerializer
 
 
 class TagViewSet(viewsets.ModelViewSet):
-    queryset = TagSerializer.objects.order_by("id")
+    queryset = Tag.objects.order_by("id")
     serializer_class = TagSerializer
