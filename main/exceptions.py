@@ -1,0 +1,2 @@
+class UnavailableStatusChange(Exception):
+    pass
