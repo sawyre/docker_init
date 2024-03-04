@@ -39,6 +39,9 @@ class Task(models.Model):
     class Meta:
         ordering = ["-priority"]
 
+    def __str__(self):
+        return self.title
+
     def change_status(self, new_status: Statuses) -> None:
         available_status_changes = {
             self.Statuses.NEW_TASK: {
