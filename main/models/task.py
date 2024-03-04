@@ -45,7 +45,7 @@ class Task(models.Model):
                 self.Statuses.IN_DEVELOPMENT,
                 self.Statuses.ARCHIVED,
             },
-            self.Statuses.IN_DEVELOPMENT: [self.Statuses.IN_QA],
+            self.Statuses.IN_DEVELOPMENT: {self.Statuses.IN_QA},
             self.Statuses.IN_QA: {
                 self.Statuses.IN_DEVELOPMENT,
                 self.Statuses.IN_CODE_REVIEW,
