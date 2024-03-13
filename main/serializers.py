@@ -26,6 +26,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "priority",
             "assignee",
             "tags",
+            "created_by",
         )
 
 
