@@ -15,10 +15,12 @@ class TestAdmin(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
-        cls.admin = User.objects.create_superuser("test@test.ru", email=None, password=None)
+        cls.admin = User.objects.create_superuser(
+            "test@test.ru", email=None, password=None
+        )
         cls.client = APIClient()
         cls.client.force_login(cls.admin)
-    
+
     # def setUp(self):
     #     self.client = APIClient()
     #     self.admin = User.objects.create_superuser('test', email=None, password="test")
@@ -50,4 +52,3 @@ class TestAdmin(APITestCase):
     def test_task(self) -> None:
         task = Task.objects.create(created_by=self.admin)
         self.assert_forms(Task, task.id)
-        
