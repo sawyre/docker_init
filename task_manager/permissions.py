@@ -16,7 +16,7 @@ class AdminModelPermissions(permissions.DjangoModelPermissions):
            not request.user.is_authenticated and self.authenticated_users_only):
             return False
 
-        if not request.user.is_staff:
+        if not request.user.is_staff and not (request.method in self.perms_map):
             return False
 
         if getattr(view, '_ignore_model_permissions', False):
