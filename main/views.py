@@ -1,7 +1,7 @@
 import django_filters
 
 from rest_framework import viewsets
-from task_manager.permissions import IsAdminOrReadOnly
+from task_manager.permissions import AdminModelPermissions
 from .serializers import UserSerializer, TaskSerializer, TagSerializer
 from .models import User, Tag, Task
 
@@ -43,10 +43,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     )
     serializer_class = TaskSerializer
     filterset_class = TaskFilter
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [AdminModelPermissions]
 
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.order_by("id")
     serializer_class = TagSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [AdminModelPermissions]
