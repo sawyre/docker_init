@@ -1,9 +1,9 @@
 from rest_framework import permissions
 
 
-class IsAdminOrReadOnly(permissions.BasePermission):
+class AdminModelPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
+        if not request.user.is_staff and (request.method == "DELETE"):
+            return False
 
-        return request.user.is_staff
+        return True
